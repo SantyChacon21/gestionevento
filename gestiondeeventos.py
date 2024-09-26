@@ -47,6 +47,7 @@ def validar_fecha_cargada(fecha_evento,evento,fechacargadas):
             validarmenu(menu)
     else:
         print (f"La fecha {fecha_evento[0]}-{fecha_evento[1]}-{fecha_evento[2]} esta disponible")
+        fechacargadas.append(fecha_evento)
     return fechaok
 
 #Funcion para verificar que la cadena sea alfanumerica
@@ -141,14 +142,15 @@ def agregarnuevoevento(dictipoevento,matrizevento):
             
             
             #Se llama a la funcion validar fecha
-            dia = str(dia).zfill(2)  # Agrega un 0 delante si es necesario
-            mes = str(mes).zfill(2)  # Agrega un 0 delante si es necesario
+            dia = str(dia).zfill(2) 
+            mes = str(mes).zfill(2) 
 
             # Se llama a la función validar fecha
             if validarfecha(int(dia), int(mes), int(anio)):
                 fechaok = True
-                fecha_evento = (dia, mes, anio)  # Almacena la fecha como una tupla
+                fecha_evento = (dia, mes, anio) 
                 fechaok = validar_fecha_cargada(fecha_evento,evento,fechacargadas)
+                evento.append(fecha_evento)
             else:
                 print("Error, la fecha es incorrecta, por favor vuelva a ingresar")
                 
