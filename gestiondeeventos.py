@@ -1,15 +1,18 @@
 import time
 
 #Funcion para validar la fecha
-def validarfecha(dia,mes,anio):
-    MESES = [0,31,28,31,30,31,30,31,31,30,30,31,30,31]
-    anioBisiesto = anio%4==0 and anio%100!=0 or anio%400==0
-    if anioBisiesto and mes == 2 and dia <= 29:
-        return True
-    elif mes >= 1 and mes <= 12:
-        return dia > 0 and dia <= MESES[mes]
+def validarfecha(dia,mes,anio): 
+    if anio > 2023:
+        MESES = [0,31,28,31,30,31,30,31,31,30,30,31,30,31]
+        anioBisiesto = anio%4==0 and anio%100!=0 or anio%400==0
+        if anioBisiesto and mes == 2 and dia <= 29:
+            return True
+        elif mes >= 1 and mes <= 12:
+            return dia > 0 and dia <= MESES[mes]
+        else:
+            False
     else:
-        False
+        return False
     
 
 #Funcion para validar que la fecha solo tenga numeros
@@ -24,13 +27,18 @@ def validar_numeros(valor_variable, nombre_variable):
             valor_variable = input(f'Ingrese {nombre_variable}: ').strip()
 
 
-
 #Funcion para verificar si la fecha ya esta reservada
-def validar_fecha_cargada(fecha_evento,evento,fechacargadas):
+def validar_fecha_cargada(fecha_evento,fechacargadas):
     fechaok = True
     if fecha_evento in fechacargadas:
         fechaok = False
         print(f"Lo lamento, la fecha {fecha_evento[0]}-{fecha_evento[1]}-{fecha_evento[2]} ya esta reservada.")
+        pregunta_reserva = aceptar('Desea reversar otra fecha?')
+        if not pregunta_reserva:
+            fechaok = True
+            elegirmenu()
+            
+        '''
         pregunta_reserva = input("¿Desea reservar otra fecha(1=Si y 2=No)?: ")
         valor_variable = validar_numeros(pregunta_reserva,"la respuesta con 1=Si o 2=No")
         while valor_variable < 1 or valor_variable > 2:
@@ -44,10 +52,11 @@ def validar_fecha_cargada(fecha_evento,evento,fechacargadas):
             print('Sistema de gestion de eventos: \n\n 1. Agregue un evento nuevo \n 2. Facturacion \n 3. Salir del menu\n\n ')
             print("*"*40)
             menu = int(input('Ingrese el numero de programa a utilizar: '))
-            validarmenu(menu)
+            validarmenu(menu)'''
     else:
         print (f"La fecha {fecha_evento[0]}-{fecha_evento[1]}-{fecha_evento[2]} esta disponible")
     return fechaok
+
 
 #Funcion para verificar que la cadena sea alfanumerica
 def validar_cadena_de_caracteres_alfanumericos(valor_cadena,nombre_cadena):
@@ -61,6 +70,7 @@ def validar_cadena_de_caracteres_alfanumericos(valor_cadena,nombre_cadena):
         valido_cadena = valor_cadena.isalnum()
     return valor_cadena
 
+
 #Funcion vara validar que la cadena solo contenga letras
 def validar_cadena_de_caracteres_alfabeticos(valor_cadena, nombre_cadena):
     aux= str(valor_cadena).replace(' ', '')
@@ -73,31 +83,30 @@ def validar_cadena_de_caracteres_alfabeticos(valor_cadena, nombre_cadena):
         valido_cadena = aux.isalpha()
     return valor_cadena
 
+
 #Funcion para validar menu
 def validarmenu(menu):
     menu = validar_numeros(menu,"el numero de programa a utilizar")
     while menu < 1 or menu > 3:
         print("El numero de menu solicitado no esta disponible, por favor eliga un menu correcto: ")
-        print("\n 1. Agregue un evento nuevo \n 2. Facturacion \n 3. Salir del menu")
-        print("*"*40)
         menu = input('Ingrese el numero de programa a utilizar: ')
         menu = validar_numeros(menu,"el numero de programa a utilizar")
-    elegirmenu(menu)
     return int(menu)
+
 
 #Funcion para validar string y para validar el tipo de evento
 def validarevento(tipoevento):
     listatipoevento = dictipoevento.keys()
-    valido = tipoevento.capitalize()
+    listatipoevento = tipoevento.capitalize()
 
-    while tipoevento not in listatipoevento:
+    while listatipoevento not in listatipoevento:
         print("*Error, el evento solicitado no esta en las opciones. Por favor, seleccionee nuevamente el tipo de evento: *")
         for x in dictipoevento:
             print("-",x,":","$",dictipoevento[x])
         print()
         tipoevento = input('Ingrese el tipo del evento: ')
-        tipoevento = tipoevento.capitalize()
-    return tipoevento
+        listatipoevento = tipoevento.capitalize()
+    return listatipoevento
 
 
 #Funcion para agregar evento nuevo
@@ -113,7 +122,6 @@ def agregarnuevoevento(dictipoevento,matrizevento):
         print()
         tipoevento = input('•Ingrese el tipo de evento: ')
         tipoevento = validar_cadena_de_caracteres_alfabeticos(tipoevento,"el tipo de evento")
-        tipoevento = tipoevento.capitalize()
         tipoevento = validarevento(tipoevento)
         evento.append(tipoevento)
         
@@ -141,14 +149,14 @@ def agregarnuevoevento(dictipoevento,matrizevento):
             
             
             #Se llama a la funcion validar fecha
-            dia = str(dia).zfill(2)  # Agrega un 0 delante si es necesario
-            mes = str(mes).zfill(2)  # Agrega un 0 delante si es necesario
+            dia = str(dia).zfill(2)  
+            mes = str(mes).zfill(2)  
 
             # Se llama a la función validar fecha
             if validarfecha(int(dia), int(mes), int(anio)):
                 fechaok = True
-                fecha_evento = (dia, mes, anio)  # Almacena la fecha como una tupla
-                fechaok = validar_fecha_cargada(fecha_evento,evento,fechacargadas)
+                fecha_evento = (dia, mes, anio)
+                fechaok = validar_fecha_cargada(fecha_evento,fechacargadas)
             else:
                 print("Error, la fecha es incorrecta, por favor vuelva a ingresar")
                 
@@ -186,43 +194,31 @@ def agregarnuevoevento(dictipoevento,matrizevento):
         #Se pregunta si se acepta el contrato
         costo_evento = calcular_costo(cantidad_invitados,tipoevento)
         costo_evento = costo_evento[3]
-        acepta= str(input(f'El costo del evento es de {costo_evento}, acepta el contrato? Si - No: '))
-        contrato= acepta_contrato(acepta)
+        print(f'El precio del evento es de {costo_evento}')
+        contrato= aceptar('Acepta el contrato?')
         if contrato:
             fechacargadas.append(fecha_evento)
             evento.append(fecha_evento)
             matrizevento.append(evento)
             #Se pregunta si se desa agregar un nuevo evento en caso de que si acepte el contrato
-            nuevoevento = input("¿Desea agregar un nuevo evento(1=Si o 2=No)?")
-            nuevoevento = validar_numeros(nuevoevento,"una respuesta con 1=Si o 2=No")
-            while nuevoevento < 1 or nuevoevento > 2:
-                print("Error, solo aceptamos como respuesta 1=Si o 2=No")
-                nuevoevento = input("¿Desea agregar un nuevo evento(1=Si o 2=No)?")
-                nuevoevento = validar_numeros(nuevoevento,"una respuesta con 1=Si o 2=No")
+            nuevoevento = aceptar('Desea agregar un nuevo evento?')
         else:
             #Se pregunta si se desa agregar un nuevo evento en caso de que no acepte el contrato
             print("-"*40)
-            nuevoevento = input("¿Desea agregar un nuevo evento(1=Si o 2=No)?")
-            nuevoevento = validar_numeros(nuevoevento,"una respuesta con 1=Si o 2=No")
-            while nuevoevento < 1 or nuevoevento > 2:
-                print("Error, solo aceptamos como respuesta 1=Si o 2=No")
-                nuevoevento = input("¿Desea agregar un nuevo evento(1=Si o 2=No)?")
-                nuevoevento = validar_numeros(nuevoevento,"una respuesta con 1=Si o 2=No")
+            nuevoevento = aceptar('Desea agregar un nuevo evento?')
     
-        if nuevoevento == 1:
+        if nuevoevento:
             confirmado = True
             print("-"*40)
             print("• Panel para agregar un evento nuevo: ")
-        else:
+        if not nuevoevento:
             confirmado = False
-            print('Sistema de gestion de eventos: \n\n 1. Agregue un evento nuevo \n 2. Facturacion \n 3. Salir del menu\n\n ')
-            print("*"*40)
-            menu = input('Ingrese el numero de programa a utilizar: ')
-            print("-"*40)
-            validarmenu(menu)
- 
-def acepta_contrato(respuesta):
-    respuesta= validar_cadena_de_caracteres_alfabeticos(respuesta, 'respuesta valida Si - No')
+            elegirmenu()
+
+
+def aceptar(pregunta):
+    acepta= str(input(f'{pregunta} Si - No: '))
+    respuesta= validar_cadena_de_caracteres_alfabeticos(acepta, 'respuesta valida Si - No')
     respuesta=respuesta.lower()
     while respuesta != 'no' and respuesta != 'si':
         respuesta= str(input('Ingrese una respuesta valida Si - No: '))
@@ -254,15 +250,11 @@ def imprimir_facturacion(matrizevento,dicprecios,dictipoevento):
         print('-'*40)
         print('Facturacion Eventos'.center(40)) 
         print("•".center(40))
-        print('No hay eventos próximos'.center(40))  # Centra el texto en 40 caracteres
+        print('No hay eventos próximos'.center(40))
         print('-' * 40)
         print()
         time.sleep(1.5)
-        print('Sistema de gestion de eventos: \n\n 1. Agregue un evento nuevo \n 2. Facturacion \n 3. Salir del menu\n\n ')
-        print("*"*40)
-        menu = input('Ingrese el numero de programa a utilizar: ')
-        print("-"*40)
-        validarmenu(menu)
+        elegirmenu()
     else:
         for f in range(len(matrizevento)):
             print(f'{f+1} -',matrizevento[f][1])
@@ -312,26 +304,23 @@ def imprimir_facturacion(matrizevento,dicprecios,dictipoevento):
         print()
         print('-'*40)
          
-        pregunta = input("Si desea volver al panel de facturacion ingrese 1 sino ingrese 2 para ir al menu: ")
-        pregunta = validar_numeros(pregunta,"ingrese 1 para volver al panel de facturacion o 2 para ir al menu")
-        while pregunta < 1 or pregunta > 2:
-            print("Error, solo se acepta 1 o 2 como respuesta")
-            print()
-            pregunta = input("Si desea volver al panel de facturacion ingrese 1 sino ingrese 2 para ir al menu: ")
-            pregunta = validar_numeros(pregunta,"ingrese 1 para volver al panel de facturacion o 2 para ir al menu")
-        if pregunta == 1:
+        pregunta = aceptar('Desea volver al panel de facturacion?')
+        if pregunta:
             imprimir_facturacion(matrizevento,dicprecios,dictipoevento)
-        else:
-            print()
-            print('Sistema de gestion de eventos: \n\n 1. Agregue un evento nuevo \n 2. Facturacion \n 3. Salir del menu\n\n ')
-            print("*"*40)
-            menu = input('Ingrese el numero de programa a \nutilizar: ')
-            print("-"*40)
-            validarmenu(menu)
+        if not pregunta:
+            elegirmenu()
             
 
 #Funcion para elegir el menu
-def elegirmenu(menu):
+def elegirmenu():
+
+    print('Sistema de gestion de eventos: \n\n 1. Agregue un evento nuevo \n 2. Facturacion \n 3. Salir del menu\n\n ')
+    print("-"*40)
+    menu = input('Ingrese el numero de programa a \nutilizar: ')
+    print("-"*40)
+
+    menu= validarmenu(menu)
+
     match menu:
         case 1:
             print()
@@ -353,11 +342,6 @@ fechacargadas = []
 dicprecios={'Mayores' : 2000 ,'Adultos': 5000 , 'Menores' : 3000}
 dictipoevento = {'Casamiento' : 500000 , 'Fiesta de quince' : 600000 , 'Comunion' : 400000 , 'Evento personalizado' : 300000}
 
-print('Sistema de gestion de eventos: \n\n 1. Agregue un evento nuevo \n 2. Facturacion \n 3. Salir del menu\n\n ')
-print("-"*40)
-menu = input('Ingrese el numero de programa a \nutilizar: ')
-print("-"*40)
 
 #Llamar funciones
-
-validarmenu(menu)
+elegirmenu()
